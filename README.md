@@ -7,6 +7,9 @@ Proyek ini merupakan proyek kecil-kecilan yang saya buat untuk menyelesaikan kel
 Proyek ini dikembangkan dengan menggunakan library [HapiJS](https://hapi.dev/). API ini dapat melakukan operasi CRUD (Create, Read, Update, Delete), dan beberapa fitur lain, seperti pencarian dengan params indeks tertentu dan pencarian berkelompok dengan query. 
 
 API ini mampu melakukan validasi (secara manual tanpa library) seperti wajib menyertakan `name`, dan `readPage` tidak boleh lebih besar dari `pageCount`, serta variabel `finished` akan dievaluasi dari nilai `pageCount` dan `readPage` apakah sama atau tidak. Untuk id, digunakan library [nanoid](https://www.npmjs.com/package/nanoid) untuk mendapatkan id unik buku.
+
+Proyek ini sudah dites dengan menggunakan Postman. File untuk melakukan testing terdapat pada folder [Testing Postman](BookshelfAPITestCollectionAndEnvironment). Anda dapat mengimpor kedua file json tersebut di Postman untuk melakukan testing.
+
 ## Instalasi
 
 Unduh proyek pada repositori ini lalu jalankan dengan menggunkan perintah berikut : 
