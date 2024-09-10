@@ -1,0 +1,35 @@
+{
+  "name": "bookshelf-api-back-end",
+  "version": "1.0.0",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "start-dev": "nodemon src/server.js"
+  },
+  "keywords": [
+    "bookshelf",
+    "api",
+    "back-end",
+    "dicoding"
+  ],
+  "author": "Ivan Wahyu Nugroho",
+  "license": "ISC",
+  "description": "Projek Bookshelf API untuk submission Dicoding pada kelas Belajar Membuat Aplikasi Back-End untuk Pemula.",
+  "dependencies": {
+    "@hapi/hapi": "^21.3.10",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "nanoid": "^3.3.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.10.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-jsdoc": "^50.2.2",
+    "eslint-plugin-n": "^16.6.2",
+    "eslint-plugin-promise": "^6.6.0",
+    "nodemon": "^3.1.4"
+  }
+}
