@@ -1,0 +1,631 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "Bookshelf API",
+        "version": "1.0.0",
+        "license": {
+            "name": "APACHE 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "description": "Projek Bookshelf API untuk submission Dicoding pada kelas Belajar Membuat Aplikasi Back-End untuk Pemula.",
+        "contact": {
+            "name": "Ivan Wahyu Nugroho",
+            "email": "ifanugrh01@gmail.com",
+            "url": "https://github.com/ifwhy/"
+        },
+        "termsOfService": "https://help.dicoding.com/tentang-dicoding/terms-of-use-akses-belajar-dicoding-indonesia/"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:{port}",
+            "description": "Deploy locally",
+            "variables": {
+                "port": {
+                    "default": "9000",
+                    "description": "Port number"
+                }
+            }
+        }
+    ],
+    "paths": {
+        "/books": {
+            "get": {
+                "tags": ["Bookshelf"],
+                "summary": "Get all books",
+                "description": "Get all books from database",
+                "parameters": [
+                    {
+                        "name": "nameQuery",
+                        "required": false,
+                        "in": "query",
+                        "description": "Filter books by name",
+                        "example": "Harry Potter",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }, {
+                        "name": "readingQuery",
+                        "required": false,
+                        "in": "query",
+                        "description": "Filter books by reading status",
+                        "examples": {
+                            "reading": {
+                                "value": "1",
+                                "summary": "Reading status"
+                            },
+                            "notReading": {
+                                "value": "0",
+                                "summary": "Not reading status"
+                            }
+                        },
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "1",
+                                "0"
+                            ]
+                        }
+                    }, {
+                        "name": "finishedQuery",
+                        "in": "query",
+                        "description": "Filter books by finished status",
+                        "required": false,
+                        "examples": {
+                            "finished": {
+                                "value": "1",
+                                "summary": "Finished status"
+                            },
+                            "notFinished": {
+                                "value": "0",
+                                "summary": "Not finished status"
+                            }
+                        },
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "1",
+                                "0"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad request - query parameter not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Query parameter not valid"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "200": {
+                        "description": "Success - get all books",
+                        "links": {
+                            "getBookDetailById": {
+                                "operationId": "getBookDetailById",
+                                "parameters": {
+                                    "bookId": "$response.body#/data/0/id"
+                                },
+                                "description": "Get first book's detail"
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "description": "List of books",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "data": {
+                                         "type": "array",
+                                         "example": [
+                                            {
+                                                "id": "amsnasnasnasnaam",
+                                                "name": "Harry Potter",
+                                                "publisher": "Bloomsbury Publishing",
+                                                "reading": true,
+                                                "finished": false
+                                            },{
+                                                "id": "kasnnsaskajsue",
+                                                "name": "The Lord of the Rings",
+                                                "publisher": "Allen & Unwin",
+                                                "reading": false,
+                                                "finished": true
+                                            }
+                                         ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found - books not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Books not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }, 
+            "post": {
+                "tags": ["Bookshelf"],
+                "summary": "Add new book",
+                "description": "Add new book to database",
+                "requestBody": {
+                    "required": true,
+                    "description": "Book's data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Book's name",
+                                        "example": "Harry Potter",
+                                        "required": ["name"]
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "description": "Book's year",
+                                        "format": "int32",
+                                        "example": 2024,
+                                        "required": ["year"],
+                                        "maxLength": 4
+                                    },
+                                    "author": {
+                                        "type": "string",
+                                        "description": "Book's author",
+                                        "example": "J.K. Rowling",
+                                        "required": ["author"],
+                                        "minLength": 1,
+                                        "maxLength": 100
+                                    }, 
+                                    "summary": {
+                                        "type": "string",
+                                        "description": "Book's summary",
+                                        "example": "Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling.",
+                                        "required": ["summary"],
+                                        "minLength": 1,
+                                        "maxLength": 1000
+                                    },
+                                    "publisher": {
+                                        "type": "string",
+                                        "description": "Book's publisher",
+                                        "example": "Bloomsbury Publishing",
+                                        "required": ["publisher"],
+                                        "minLength": 1,
+                                        "maxLength": 100
+                                    },
+                                    "pageCount": {
+                                        "type": "integer",
+                                        "description": "Book's page count",
+                                        "format": "int32",
+                                        "example": 100,
+                                        "required": ["pageCount"],
+                                        "minLength": 1
+                                    },
+                                    "readPage": {
+                                        "type": "integer",
+                                        "description": "Book's read page",
+                                        "format": "int32",
+                                        "example": 50,
+                                        "required": ["readPage"],
+                                        "minLength": 1
+                                    },
+                                    "reading": {
+                                        "type": "boolean",
+                                        "description": "Book's reading status",
+                                        "example": true,
+                                        "required": ["reading"]
+                                    },
+                                    "finished": {
+                                        "type": "boolean",
+                                        "description": "Book's finished status",
+                                        "example": false,
+                                        "required": ["finished"]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "500": {
+                        "description": "Internal server error - failed to add new book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to add new book"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": "fail",
+                                    "message": "Failed to add new book"
+                                }
+                            }
+                        }
+                    },
+                    "201": {
+                        "description": "Success - add new book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book added successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "bookId": {
+                                                    "type": "string",
+                                                    "example": "amsnasnasnasnaam"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - request body not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Request body not valid"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/books/{bookId}": {
+            "get": {
+                "tags": ["Bookshelf"],
+                "summary": "Get book's detail",
+                "description": "Get book's detail by id from database",
+                "parameters": [
+                    {
+                        "name": "bookId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Book's id for detail",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success - get book's detail",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": "success",
+                                    "data": {
+                                        "id": "amsnasnasnasnaam",
+                                        "name": "Harry Potter",
+                                        "year": 2024,
+                                        "author": "J.K. Rowling",
+                                        "summary": "Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling.",
+                                        "publisher": "Bloomsbury Publishing",
+                                        "pageCount": 100,
+                                        "readPage": 50,
+                                        "reading": true,
+                                        "finished": false,
+                                        "insertedAt": "2021-08-08T07:00:00.000Z",
+                                        "updatedAt": "2021-08-08T07:00:00.000Z"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - book's id not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }, 
+            "put": {
+                "tags": ["Bookshelf"],
+                "summary": "Update existing book",
+                "description": "Update existing book in database",
+                "parameters": [
+                    {
+                        "name": "bookId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Book's id for updated",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "description": "Book's data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Book's name",
+                                        "example": "Harry Potter"
+                                    },
+                                    "year": {
+                                        "type": "integer",
+                                        "description": "Book's year",
+                                        "format": "int32",
+                                        "example": 2024
+                                    },
+                                    "author": {
+                                        "type": "string",
+                                        "description": "Book's author",
+                                        "example": "J.K. Rowling"
+                                    },
+                                    "summary": {
+                                        "type": "string",
+                                        "description": "Book's summary",
+                                        "example": "Harry Potter is a series of seven fantasy novels written by British author, J. K. Rowling."
+                                    },
+                                    "publisher": {
+                                        "type": "string",
+                                        "description": "Book's publisher",
+                                        "example": "Bloomsbury Publishing"
+                                    },
+                                    "pageCount": {
+                                        "type": "integer",
+                                        "description": "Book's page count",
+                                        "format": "int32",
+                                        "example": 100
+                                    },
+                                    "readPage": {
+                                        "type": "integer",
+                                        "description": "Book's read page",
+                                        "format": "int32",
+                                        "example": 50
+                                    },
+                                    "reading": {
+                                        "type": "boolean",
+                                        "description": "Book's reading status",
+                                        "example": true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success - update book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book updated successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error - failed to update book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Failed to update book"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - request body not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Request body not valid"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not found - book's id not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Bookshelf"],
+                "summary": "Delete existing book",
+                "description": "Delete existing book from database",
+                "parameters": [
+                    {
+                        "name": "bookId",
+                        "in": "path",
+                        "required": true,
+                        "description": "Book's id for deleted",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success - delete book",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "success"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book deleted successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request - book's id not valid",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "fail"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Book not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "url": "https://github.com/ifwhy/bookshelf-api-back-end",
+        "description": "Github repository"
+    }
+}
